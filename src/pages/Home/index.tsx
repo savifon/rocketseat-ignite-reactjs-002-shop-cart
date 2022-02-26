@@ -5,7 +5,6 @@ import { ProductList } from './styles';
 import { api } from '../../services/api';
 import { formatPrice } from '../../util/format';
 import { useCart } from '../../hooks/useCart';
-import internal from "stream";
 
 interface Product {
   id: number;
@@ -34,17 +33,14 @@ const Home = (): JSX.Element => {
 
   useEffect(() => {
     async function loadProducts() {
-      const response = await api.get('/products');
-      const data = response.data;
+      const response = await api.get<Product[]>('/products');
 
-      const dataFormatted = data.map((product: Product) => {
-        return {
+      const data = response.data.map(product => ({
           ...product,
           priceFormatted: formatPrice(product.price)
-        }
-      })
+      }))
       
-      setProducts(dataFormatted);
+      setProducts(data);
     }
 
     loadProducts();
